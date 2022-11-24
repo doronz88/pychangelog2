@@ -30,10 +30,7 @@ if __name__ == '__main__':
         description='Simple tool for creating changelogs',
         long_description=get_description(),
         long_description_content_type='text/markdown',
-        cmdclass={},
         packages=PACKAGES,
-        package_data={'': ['*.txt', '*.TXT', '*.json'], },
-        data_files=[('.', ['requirements.txt'])],
         author='DoronZ',
         install_requires=parse_requirements(),
         entry_points={
@@ -41,13 +38,13 @@ if __name__ == '__main__':
                                 ],
         },
         classifiers=[
-            'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
             'Programming Language :: Python :: 3.9',
             'Programming Language :: Python :: 3.10',
+            'Programming Language :: Python :: 3.11',
         ],
-        url='https://github.com/doronz88/pymobiledevice3',
+        url='https://github.com/doronz88/pychangelog2',
         project_urls={
             'pychangelog2': 'https://github.com/doronz88/pychangelog2'
         },
