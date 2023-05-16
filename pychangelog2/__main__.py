@@ -18,7 +18,7 @@ def cli(path):
 
     commits = []
     for commit in repo.iter_commits():
-        if commit.message.startswith('Merge pull request'):
+        if commit.message.startswith('Merge '):
             # skip merge requests
             continue
         if commit == last_tag.commit:
