@@ -33,7 +33,7 @@ test = ["pytest"]
 "Bug Reports" = "https://github.com/doronz88/pychangelog2/issues"
 
 [project.scripts]
-rpcclient = "pychangelog2.__main__:cli"
+pychangelog2 = "pychangelog2.__main__:cli"
 
 [tool.setuptools.packages.find]
 exclude = ["docs*", "tests*"]
