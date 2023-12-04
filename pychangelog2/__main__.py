@@ -18,18 +18,20 @@ def cli(path):
 
     commits = []
     for commit in repo.iter_commits():
-        if commit.message.startswith('Merge '):
-            # skip merge requests
-            continue
         if commit == last_tag.commit:
             # reaches last tag
             break
-        commits.append(commit)
+
+        if len(commit.parents) > 1:
+            commit = commit.parents[1]
+
+        if commit not in commits:
+            commits.append(commit)
 
     commits = commits[::-1]
 
     for commit in commits:
-        print(FORMAT.format(hash=commit.hexsha, message=commit.message.strip()))
+        print(FORMAT.format(hash=commit.hexsha, message=commit.message.strip().splitlines()[0]))
 
 
 if __name__ == '__main__':
