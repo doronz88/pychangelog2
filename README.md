@@ -1,7 +1,8 @@
 # Description
 
-Simple utility for quickly generating changelogs, assuming your commits are ordered as they should be. This tool will
-simply log all latest commits till last created tag.
+Simple utility for quickly generating changelogs, assuming your commits are ordered as they should be. By default this
+tool logs commits from `HEAD` back to the latest created tag. You can also provide a specific tag and log from that tag
+until now.
 
 # Installation
 
@@ -18,4 +19,12 @@ python3 -m pip install --user -U pychangelog2
 * 03f0bee3219fc30aa4f3b378420f5a807eda13b9 requirements: pyusb>=1.2.1
 * 7456890e51244e014352a01a9670c35368a68c56 Bugfix: AFC: Pull, push, cd and completion
 * d84f3d19f4db5499f0cdcf09bc1b993a96ea1cb0 Replace distutils.LooseVersion with packaging.Version.
+
+➜  pychangelog2 git:(master) ✗ pychangelog2 <path to some repo> --start-tag v1.2.0
+* 41dfac... add release docs
+* 1f4a12... fix CLI argument parsing
+
+➜  pychangelog2 git:(master) ✗ pychangelog2 <path to some repo> --start-tag v1.2.0 --end-tag v1.4.0
+* 12cdab... add tests for transport layer
+* 38ef11... fix AFC timeout handling
 ```
