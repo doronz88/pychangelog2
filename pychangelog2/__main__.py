@@ -44,9 +44,9 @@ def cli(path, start_tag, end_tag):
     end_ref = resolved_end_tag.name if resolved_end_tag else 'HEAD'
 
     if resolved_start_tag:
-        commits = list(repo.iter_commits(f'{resolved_start_tag.name}..{end_ref}', first_parent=True))
+        commits = list(repo.iter_commits(f'{resolved_start_tag.name}..{end_ref}'))
     else:
-        commits = list(repo.iter_commits(end_ref, first_parent=True))
+        commits = list(repo.iter_commits(end_ref))
 
     commits.reverse()
 
