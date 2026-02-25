@@ -1,7 +1,9 @@
-import click
+from typing import Annotated, Optional
 from git import Repo
+import typer
 
-FORMAT = '* {hash} {message}'
+FORMAT = "* {hash} {message}"
+app = typer.Typer(add_completion=False)
 
 
 def _find_tag(repo, tag_name):
@@ -25,34 +27,57 @@ def _resolve_tag(repo, tag_name):
 
     tag = _find_tag(repo, tag_name)
     if tag is None:
-        raise click.ClickException(f'tag not found: {tag_name}')
+        raise typer.BadParameter(f"tag not found: {tag_name}")
 
     return tag
 
 
-@click.command()
-@click.argument('path', type=click.Path(dir_okay=True, file_okay=False, exists=True))
-@click.option('--start-tag', help='Start changelog after this tag.')
-@click.option('--end-tag', help='End changelog at this tag (defaults to HEAD).')
-def cli(path, start_tag, end_tag):
+@app.command()
+def changelog(
+    path: Annotated[str, typer.Argument(exists=True, file_okay=False, dir_okay=True)],
+    start_tag: Annotated[
+        Optional[str],
+        typer.Option("--start-tag", help="Start changelog after this tag."),
+    ] = None,
+    end_tag: Annotated[
+        Optional[str],
+        typer.Option("--end-tag", help="End changelog at this tag (defaults to HEAD)."),
+    ] = None,
+):
     repo = Repo(path)
     if end_tag and not start_tag:
-        raise click.ClickException('--end-tag requires --start-tag')
+        typer.echo("--end-tag requires --start-tag", err=True)
+        raise typer.Exit(code=2)
 
     resolved_start_tag = _resolve_tag(repo, start_tag) or _find_latest_tag(repo)
     resolved_end_tag = _resolve_tag(repo, end_tag)
-    end_ref = resolved_end_tag.name if resolved_end_tag else 'HEAD'
+    end_ref = resolved_end_tag.name if resolved_end_tag else "HEAD"
 
     if resolved_start_tag:
-        commits = list(repo.iter_commits(f'{resolved_start_tag.name}..{end_ref}'))
+        commits = list(repo.iter_commits(f"{resolved_start_tag.name}..{end_ref}"))
     else:
         commits = list(repo.iter_commits(end_ref))
+
+    commits = [
+        commit
+        for commit in commits
+        if not commit.message.startswith("Merge pull request")
+        and not commit.message.startswith("Merge branch")
+    ]
 
     commits.reverse()
 
     for commit in commits:
-        print(FORMAT.format(hash=commit.hexsha, message=commit.message.strip().splitlines()[0]))
+        typer.echo(
+            FORMAT.format(
+                hash=commit.hexsha, message=commit.message.strip().splitlines()[0]
+            )
+        )
 
 
-if __name__ == '__main__':
+def cli():
+    app()
+
+
+if __name__ == "__main__":
     cli()

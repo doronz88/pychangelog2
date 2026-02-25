@@ -1,30 +1,71 @@
-# Description
+# pychangelog2
 
-Simple utility for quickly generating changelogs, assuming your commits are ordered as they should be. By default this
-tool logs commits from `HEAD` back to the latest created tag. You can also provide a specific tag and log from that tag
-until now.
+Generate a simple changelog from Git history.
 
-# Installation
+`pychangelog2` prints commit lines in chronological order and is designed for
+release notes workflows where commit subjects are already clean and meaningful.
 
-```shell
+## Features
+
+- Generates changelog entries from a local Git repository path.
+- Defaults to commits from the latest tag to `HEAD`.
+- Supports explicit `--start-tag` and `--end-tag` ranges.
+- Excludes merge commits created by GitHub PR merges and branch merges.
+
+## Installation
+
+Install from PyPI:
+
+```bash
 python3 -m pip install --user -U pychangelog2
 ```
 
-# Example
+Install from source:
 
+```bash
+git clone https://github.com/doronz88/pychangelog2.git
+cd pychangelog2
+python3 -m pip install -e .
 ```
-➜  pychangelog2 git:(master) ✗ pychangelog2 <path to some repo>
-* b1682a0ba253f21a91fabb4d02b9a6d0ec177f7b git: add .idea to .gitignore
-* d499ab0f39688e371287ccf3dfc67366e0f70a48 cli: lockdown: add device-name subcommand
-* 03f0bee3219fc30aa4f3b378420f5a807eda13b9 requirements: pyusb>=1.2.1
-* 7456890e51244e014352a01a9670c35368a68c56 Bugfix: AFC: Pull, push, cd and completion
-* d84f3d19f4db5499f0cdcf09bc1b993a96ea1cb0 Replace distutils.LooseVersion with packaging.Version.
 
-➜  pychangelog2 git:(master) ✗ pychangelog2 <path to some repo> --start-tag v1.2.0
-* 41dfac... add release docs
-* 1f4a12... fix CLI argument parsing
+## Usage
 
-➜  pychangelog2 git:(master) ✗ pychangelog2 <path to some repo> --start-tag v1.2.0 --end-tag v1.4.0
-* 12cdab... add tests for transport layer
-* 38ef11... fix AFC timeout handling
+```bash
+pychangelog2 [OPTIONS] PATH
+```
+
+- `PATH`: path to a local Git repository.
+- `--start-tag TEXT`: start changelog after this tag.
+- `--end-tag TEXT`: end changelog at this tag (defaults to `HEAD`).
+
+## Behavior
+
+- If `--start-tag` is omitted, the tool starts from the most recently authored
+  tag in the repository.
+- If `--end-tag` is provided, `--start-tag` is required.
+- If a provided tag does not exist, the command exits with an error.
+- Output format is:
+
+```text
+* <full-commit-sha> <first-line-of-commit-message>
+```
+
+## Examples
+
+Generate changelog from the latest tag to `HEAD`:
+
+```bash
+pychangelog2 /path/to/repo
+```
+
+Generate changelog from a specific tag to `HEAD`:
+
+```bash
+pychangelog2 /path/to/repo --start-tag v1.2.0
+```
+
+Generate changelog between two tags:
+
+```bash
+pychangelog2 /path/to/repo --start-tag v1.2.0 --end-tag v1.4.0
 ```
